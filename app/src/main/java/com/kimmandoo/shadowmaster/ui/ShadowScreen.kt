@@ -74,6 +74,11 @@ fun ElevationShadowContent() {
     var cornerRadius by remember { mutableStateOf(16f) }
     var ambientAlpha by remember { mutableStateOf(0.1f) }
     var spotAlpha by remember { mutableStateOf(0.1f) }
+    var red by remember { mutableStateOf(0f) }
+    var green by remember { mutableStateOf(0f) }
+    var blue by remember { mutableStateOf(0f) }
+    
+    val shadowColor = Color(red = red, green = green, blue = blue)
 
     LazyColumn(
         modifier = Modifier
@@ -89,8 +94,8 @@ fun ElevationShadowContent() {
                     .shadow(
                         elevation = elevation.dp,
                         shape = RoundedCornerShape(cornerRadius.dp),
-                        ambientColor = Color.Black.copy(alpha = ambientAlpha),
-                        spotColor = Color.Black.copy(alpha = spotAlpha)
+                        ambientColor = shadowColor.copy(alpha = ambientAlpha),
+                        spotColor = shadowColor.copy(alpha = spotAlpha)
                     )
                     .clip(RoundedCornerShape(cornerRadius.dp))
                     .background(MaterialTheme.colorScheme.surface),
@@ -140,6 +145,36 @@ fun ElevationShadowContent() {
                 format = "%.2f"
             )
         }
+
+        item {
+            ControlSlider(
+                label = "Red",
+                value = red,
+                onValueChange = { red = it },
+                valueRange = 0f..1f,
+                format = "%.2f"
+            )
+        }
+
+        item {
+            ControlSlider(
+                label = "Green",
+                value = green,
+                onValueChange = { green = it },
+                valueRange = 0f..1f,
+                format = "%.2f"
+            )
+        }
+
+        item {
+            ControlSlider(
+                label = "Blue",
+                value = blue,
+                onValueChange = { blue = it },
+                valueRange = 0f..1f,
+                format = "%.2f"
+            )
+        }
     }
 }
 
@@ -150,6 +185,11 @@ fun DropShadowContent() {
     var offsetX by remember { mutableStateOf(8f) }
     var offsetY by remember { mutableStateOf(8f) }
     var blurRadius by remember { mutableStateOf(20f) }
+    var red by remember { mutableStateOf(0f) }
+    var green by remember { mutableStateOf(0f) }
+    var blue by remember { mutableStateOf(0f) }
+    
+    val shadowColor = Color(red = red, green = green, blue = blue)
 
     LazyColumn(
         modifier = Modifier
@@ -163,7 +203,7 @@ fun DropShadowContent() {
                     .padding(top = 40.dp)
                     .size(200.dp)
                     .dropShadow(
-                        color = Color.Black.copy(alpha = shadowAlpha),
+                        color = shadowColor.copy(alpha = shadowAlpha),
                         offsetX = offsetX.dp,
                         offsetY = offsetY.dp,
                         blurRadius = blurRadius.dp,
@@ -225,6 +265,36 @@ fun DropShadowContent() {
                 onValueChange = { blurRadius = it },
                 valueRange = 0f..100f,
                 format = "%.0fdp"
+            )
+        }
+
+        item {
+            ControlSlider(
+                label = "Red",
+                value = red,
+                onValueChange = { red = it },
+                valueRange = 0f..1f,
+                format = "%.2f"
+            )
+        }
+
+        item {
+            ControlSlider(
+                label = "Green",
+                value = green,
+                onValueChange = { green = it },
+                valueRange = 0f..1f,
+                format = "%.2f"
+            )
+        }
+
+        item {
+            ControlSlider(
+                label = "Blue",
+                value = blue,
+                onValueChange = { blue = it },
+                valueRange = 0f..1f,
+                format = "%.2f"
             )
         }
     }
