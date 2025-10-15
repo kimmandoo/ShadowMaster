@@ -1,5 +1,8 @@
 # ShadowMaster
 
+| | |
+| - | - |
+|![untitled](https://github.com/user-attachments/assets/49dcd93c-9dac-44b5-8375-1d6c40b9f7e7)|![untitled2](https://github.com/user-attachments/assets/3c1ac680-5872-4395-a91c-a6e57046e55b) |
 
 
 ### ColorSlider
@@ -25,3 +28,6 @@ Canvas의 `BlurMaskFilter`를 Figma의 Drop Shadow와 유사하게 보이도록 
 - **Offset X** (-40dp ~ +40dp): 그림자의 수평 방향 이동 거리. 음수는 왼쪽, 양수는 오른쪽으로 이동
 - **Offset Y** (-40dp ~ +40dp): 그림자의 수직 방향 이동 거리. 음수는 위쪽, 양수는 아래쪽으로 이동
 - **Blur Radius** (0-100dp): 그림자 테두리의 흐림 정도. 값이 클수록 그림자가 더 부드럽고 넓게 퍼짐
+
+### Inner Shadow
+구현 예정입니다
