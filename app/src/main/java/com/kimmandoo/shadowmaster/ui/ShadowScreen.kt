@@ -1,5 +1,6 @@
 package com.kimmandoo.shadowmaster.ui
 
+import android.annotation.SuppressLint
 import android.graphics.BlurMaskFilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -31,11 +32,13 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import kotlin.unaryMinus
 
 @Composable
 fun ShadowScreen(paddingValues: PaddingValues = PaddingValues()) {
@@ -228,7 +231,7 @@ fun DropShadowContent() {
 }
 
 @Composable
-private fun ControlSlider(
+fun ControlSlider(
     label: String,
     value: Float,
     onValueChange: (Float) -> Unit,
@@ -251,9 +254,9 @@ fun Modifier.dropShadow(
     offsetX: Dp = 0.dp,
     offsetY: Dp = 0.dp,
     blurRadius: Dp = 0.dp,
-    shape: androidx.compose.ui.graphics.Shape
-) = then(
-    drawBehind {
+    shape: Shape
+): Modifier {
+   return drawBehind {
         drawIntoCanvas { canvas ->
             val paint = Paint()
             val frameworkPaint = paint.asFrameworkPaint()
@@ -273,4 +276,4 @@ fun Modifier.dropShadow(
             canvas.translate(-leftPixel, -topPixel)
         }
     }
-)
+}
