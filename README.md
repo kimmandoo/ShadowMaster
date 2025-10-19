@@ -24,6 +24,8 @@ elevation에 따라 그림자를 생성하며, ambient와 spot 두 가지 광원
 Canvas의 `BlurMaskFilter`를 사용해 Figma의 Drop Shadow와 유사하게 보이도록 했습니다.
 drop shadow 이외에도, Inner, Outer, Solid 스타일을 선택 해볼 수 있습니다.
 
+--> Inner Shadow의 경우 제대로 그려지지않는 상태라 구현중입니다.
+
 - **Corner Radius** (0-100dp): 그림자가 적용되는 박스의 모서리 둥글기
 - **Shadow Alpha** (0.0-1.0): 그림자 전체의 투명도/강도
 - **Offset X** (-40dp ~ +40dp): 그림자의 수평 방향 이동 거리. 음수는 왼쪽, 양수는 오른쪽으로 이동
