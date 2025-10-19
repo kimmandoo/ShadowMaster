@@ -2,6 +2,9 @@ package com.kimmandoo.shadowmaster.ui
 
 import android.annotation.SuppressLint
 import android.graphics.BlurMaskFilter
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,12 +35,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
+import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.semantics.Role
@@ -82,7 +89,7 @@ fun ElevationShadowContent() {
     var red by remember { mutableStateOf(0f) }
     var green by remember { mutableStateOf(0f) }
     var blue by remember { mutableStateOf(0f) }
-    
+
     val shadowColor = Color(red = red, green = green, blue = blue)
 
     LazyColumn(
@@ -194,7 +201,7 @@ fun DropShadowContent() {
     var green by remember { mutableStateOf(0f) }
     var blue by remember { mutableStateOf(0f) }
     var blurStyle by remember { mutableStateOf(BlurMaskFilter.Blur.NORMAL) }
-    
+
     val shadowColor = Color(red = red, green = green, blue = blue)
 
     LazyColumn(
@@ -204,23 +211,48 @@ fun DropShadowContent() {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         item {
-            Box(
-                modifier = Modifier
-                    .padding(top = 40.dp)
-                    .size(200.dp)
-                    .dropShadow(
-                        color = shadowColor.copy(alpha = shadowAlpha),
-                        offsetX = offsetX.dp,
-                        offsetY = offsetY.dp,
-                        blurRadius = blurRadius.dp,
-                        shape = RoundedCornerShape(cornerRadius.dp),
-                        blurStyle = blurStyle
-                    )
-                    .clip(RoundedCornerShape(cornerRadius.dp))
-                    .background(MaterialTheme.colorScheme.surface),
-                contentAlignment = Alignment.Center
+            AnimatedVisibility(
+                visible = blurStyle == BlurMaskFilter.Blur.INNER
             ) {
-                Text("Shadow Box")
+                Box(
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                        .size(200.dp)
+                        .innerShadow(
+                            shape = RoundedCornerShape(cornerRadius.dp),
+                            color = shadowColor.copy(alpha = shadowAlpha),
+                            blur = blurRadius.dp,
+                            offsetY = offsetY.dp,
+                            offsetX = offsetX.dp,
+                        )
+                        .clip(RoundedCornerShape(cornerRadius.dp))
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Shadow Box")
+                }
+            }
+            AnimatedVisibility(
+                visible = blurStyle != BlurMaskFilter.Blur.INNER
+            ) {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 40.dp)
+                        .size(200.dp)
+                        .dropShadow(
+                            color = shadowColor.copy(alpha = shadowAlpha),
+                            offsetX = offsetX.dp,
+                            offsetY = offsetY.dp,
+                            blurRadius = blurRadius.dp,
+                            shape = RoundedCornerShape(cornerRadius.dp),
+                            blurStyle = blurStyle
+                        )
+                        .clip(RoundedCornerShape(cornerRadius.dp))
+                        .background(MaterialTheme.colorScheme.surface),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("Shadow Box")
+                }
             }
             Spacer(modifier = Modifier.height(32.dp))
         }
@@ -332,6 +364,34 @@ fun ControlSlider(
             valueRange = valueRange
         )
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+fun Modifier.innerShadow(
+    shape: Shape,
+    color: Color = Color.Black,
+    blur: Dp = 4.dp,
+    offsetY: Dp = 2.dp,
+    offsetX: Dp = 2.dp,
+) = this.drawWithContent {
+    drawContent()
+    drawIntoCanvas { canvas ->
+        val shadowSize = Size(size.width, size.height)
+        val shadowOutline = shape.createOutline(shadowSize, layoutDirection, this)
+        val paint = Paint()
+        paint.color = color
+        canvas.saveLayer(size.toRect(), paint)
+        canvas.drawOutline(shadowOutline, paint)
+        paint.asFrameworkPaint().apply {
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.DST_OUT)
+            if (blur.toPx() > 0) {
+                maskFilter = BlurMaskFilter(blur.toPx(), BlurMaskFilter.Blur.NORMAL)
+            }
+        }
+        paint.color = Color.Black
+        canvas.translate(offsetX.toPx(), offsetY.toPx())
+        canvas.drawOutline(shadowOutline, paint)
+        canvas.restore()
     }
 }
 
