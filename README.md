@@ -2,7 +2,7 @@
 
 | | |
 | - | - |
-|![untitled](https://github.com/user-attachments/assets/49dcd93c-9dac-44b5-8375-1d6c40b9f7e7)|![untitled2](https://github.com/user-attachments/assets/3c1ac680-5872-4395-a91c-a6e57046e55b) |
+|![untitled](https://github.com/user-attachments/assets/49dcd93c-9dac-44b5-8375-1d6c40b9f7e7) | ![untitled](https://github.com/user-attachments/assets/aedf71ad-f0b3-4b5a-b055-ddc926f4c98a)|
 
 
 ### ColorSlider
@@ -18,16 +18,14 @@ elevation에 따라 그림자를 생성하며, ambient와 spot 두 가지 광원
 - **Ambient Alpha** (0.0-1.0): 주변광에 의한 그림자의 투명도 = 그림자 강도
 - **Spot Alpha** (0.0-1.0): 직접광(위에서 비추는 빛)에 의한 그림자의 투명도를 조정
 
-### Drop Shadow
+### Custom Shadow
 
 `Modifier.dropShadow` 커스텀 확장 함수를 사용한 모드입니다. 
-Canvas의 `BlurMaskFilter`를 Figma의 Drop Shadow와 유사하게 보이도록 했습니다.
+Canvas의 `BlurMaskFilter`를 사용해 Figma의 Drop Shadow와 유사하게 보이도록 했습니다.
+drop shadow 이외에도, Inner, Outer, Solid 스타일을 선택 해볼 수 있습니다.
 
 - **Corner Radius** (0-100dp): 그림자가 적용되는 박스의 모서리 둥글기
 - **Shadow Alpha** (0.0-1.0): 그림자 전체의 투명도/강도
 - **Offset X** (-40dp ~ +40dp): 그림자의 수평 방향 이동 거리. 음수는 왼쪽, 양수는 오른쪽으로 이동
 - **Offset Y** (-40dp ~ +40dp): 그림자의 수직 방향 이동 거리. 음수는 위쪽, 양수는 아래쪽으로 이동
 - **Blur Radius** (0-100dp): 그림자 테두리의 흐림 정도. 값이 클수록 그림자가 더 부드럽고 넓게 퍼짐
-
-### Inner Shadow
-구현 예정입니다
