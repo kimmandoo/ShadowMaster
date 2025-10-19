@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,8 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -36,6 +40,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.addOutline
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlin.unaryMinus
@@ -188,6 +193,7 @@ fun DropShadowContent() {
     var red by remember { mutableStateOf(0f) }
     var green by remember { mutableStateOf(0f) }
     var blue by remember { mutableStateOf(0f) }
+    var blurStyle by remember { mutableStateOf(BlurMaskFilter.Blur.NORMAL) }
     
     val shadowColor = Color(red = red, green = green, blue = blue)
 
@@ -207,7 +213,8 @@ fun DropShadowContent() {
                         offsetX = offsetX.dp,
                         offsetY = offsetY.dp,
                         blurRadius = blurRadius.dp,
-                        shape = RoundedCornerShape(cornerRadius.dp)
+                        shape = RoundedCornerShape(cornerRadius.dp),
+                        blurStyle = blurStyle
                     )
                     .clip(RoundedCornerShape(cornerRadius.dp))
                     .background(MaterialTheme.colorScheme.surface),
@@ -216,6 +223,15 @@ fun DropShadowContent() {
                 Text("Shadow Box")
             }
             Spacer(modifier = Modifier.height(32.dp))
+        }
+
+        item {
+            BlurStyleSelector(
+                selectedStyle = blurStyle,
+                onStyleSelected = { newStyle ->
+                    blurStyle = newStyle
+                }
+            )
         }
 
         item {
@@ -324,14 +340,15 @@ fun Modifier.dropShadow(
     offsetX: Dp = 0.dp,
     offsetY: Dp = 0.dp,
     blurRadius: Dp = 0.dp,
-    shape: Shape
+    shape: Shape,
+    blurStyle: BlurMaskFilter.Blur = BlurMaskFilter.Blur.NORMAL
 ): Modifier {
    return drawBehind {
         drawIntoCanvas { canvas ->
             val paint = Paint()
             val frameworkPaint = paint.asFrameworkPaint()
             if (blurRadius != 0.dp) {
-                frameworkPaint.maskFilter = (BlurMaskFilter(blurRadius.toPx(), BlurMaskFilter.Blur.NORMAL))
+                frameworkPaint.maskFilter = (BlurMaskFilter(blurRadius.toPx(), blurStyle))
             }
             frameworkPaint.color = color.toArgb()
 
@@ -344,6 +361,49 @@ fun Modifier.dropShadow(
             canvas.translate(leftPixel, topPixel)
             canvas.drawPath(path, paint)
             canvas.translate(-leftPixel, -topPixel)
+        }
+    }
+}
+
+@Composable
+fun BlurStyleSelector(
+    selectedStyle: BlurMaskFilter.Blur,
+    onStyleSelected: (BlurMaskFilter.Blur) -> Unit
+) {
+    val blurStyles = listOf(
+        BlurMaskFilter.Blur.NORMAL,
+        BlurMaskFilter.Blur.SOLID,
+        BlurMaskFilter.Blur.OUTER,
+        BlurMaskFilter.Blur.INNER
+    )
+
+    Column(Modifier.padding(vertical = 16.dp)) {
+        Text(
+            text = "Style:",
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+
+        blurStyles.forEach { style ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .selectable(
+                        selected = (selectedStyle == style),
+                        onClick = { onStyleSelected(style) },
+                        role = Role.RadioButton
+                    )
+                    .padding(vertical = 4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                RadioButton(
+                    selected = (selectedStyle == style),
+                    onClick = null
+                )
+                Text(
+                    text = style.name,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
         }
     }
 }
