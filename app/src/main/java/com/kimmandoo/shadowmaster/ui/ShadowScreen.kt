@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
@@ -239,7 +240,7 @@ fun DropShadowContent() {
                     modifier = Modifier
                         .padding(top = 40.dp)
                         .size(200.dp)
-                        .dropShadow(
+                        .dropShadowCache(
                             color = shadowColor.copy(alpha = shadowAlpha),
                             offsetX = offsetX.dp,
                             offsetY = offsetY.dp,
@@ -392,6 +393,39 @@ fun Modifier.innerShadow(
         canvas.translate(offsetX.toPx(), offsetY.toPx())
         canvas.drawOutline(shadowOutline, paint)
         canvas.restore()
+    }
+}
+
+fun Modifier.dropShadowCache(
+    color: Color = Color.Black,
+    offsetX: Dp = 0.dp,
+    offsetY: Dp = 0.dp,
+    blurRadius: Dp = 0.dp,
+    shape: Shape,
+    blurStyle: BlurMaskFilter.Blur = BlurMaskFilter.Blur.NORMAL
+): Modifier {
+    return drawWithCache {
+        val paint = Paint()
+        val frameworkPaint = paint.asFrameworkPaint()
+        if (blurRadius != 0.dp) {
+            frameworkPaint.maskFilter = (BlurMaskFilter(blurRadius.toPx(), blurStyle))
+        }
+        frameworkPaint.color = color.toArgb()
+
+        val leftPixel = offsetX.toPx()
+        val topPixel = offsetY.toPx()
+
+        val path = Path().apply {
+            addOutline(shape.createOutline(size, layoutDirection, this@drawWithCache))
+        }
+
+        onDrawBehind {
+            drawIntoCanvas { canvas ->
+                canvas.translate(leftPixel, topPixel)
+                canvas.drawPath(path, paint)
+                canvas.translate(-leftPixel, -topPixel)
+            }
+        }
     }
 }
 
